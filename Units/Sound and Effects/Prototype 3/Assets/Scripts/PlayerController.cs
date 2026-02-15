@@ -29,6 +29,7 @@ public class PlayerController : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        // Player jump, animation, particles, jump sound
         if (Input.GetKeyDown(KeyCode.Space) && isOnGround && !gameOver)
         {
             playerRb.AddForce(Vector3.up * jumpForce, ForceMode.Impulse);
@@ -39,13 +40,17 @@ public class PlayerController : MonoBehaviour
         }
     }
 
+    // Any collision, collision object is passed to method
     private void OnCollisionEnter(Collision collision)
     {
+        // When Player touches ground after jump
         if (collision.gameObject.CompareTag("Ground"))
         {
             isOnGround = true;
             dirtParticle.Play();
-        } else if (collision.gameObject.CompareTag("Obstacle")) 
+        } 
+        // When player touches obstacle
+        else if (collision.gameObject.CompareTag("Obstacle")) 
         {
             Debug.Log("Game Over");
             gameOver = true;
