@@ -34,9 +34,15 @@ public class PlayerController : MonoBehaviour
         {
             playerRb.AddForce(Vector3.up * jumpForce, ForceMode.Impulse);
             isOnGround = false;
+            playerAnim.SetBool("Grounded", false);
             playerAnim.SetTrigger("Jump_trig");
             dirtParticle.Stop();
             playerAudio.PlayOneShot(jumpSound, 1.0f);
+        }
+        if (Input.GetKeyDown(KeyCode.DownArrow))
+        {
+            //playerAnim.SetTrigger("FastDown_trig");
+            gravityModifier = 10f;
         }
     }
 
@@ -47,7 +53,10 @@ public class PlayerController : MonoBehaviour
         if (collision.gameObject.CompareTag("Ground"))
         {
             isOnGround = true;
+            playerAnim.SetBool("Grounded", true);
             dirtParticle.Play();
+            //playerAnim.SetTrigger("FastDown_trig");
+            gravityModifier = 1.5f;
         } 
         // When player touches obstacle
         else if (collision.gameObject.CompareTag("Obstacle")) 

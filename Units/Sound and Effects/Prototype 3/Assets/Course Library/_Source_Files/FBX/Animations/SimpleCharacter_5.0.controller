@@ -1835,7 +1835,7 @@ AnimatorStateTransition:
   serializedVersion: 3
   m_TransitionDuration: 0.25
   m_TransitionOffset: 0
-  m_ExitTime: 0.75
+  m_ExitTime: 0.7458031
   m_HasExitTime: 1
   m_HasFixedDuration: 0
   m_InterruptionSource: 0
@@ -5500,8 +5500,8 @@ AnimatorStateTransition:
   m_PrefabAsset: {fileID: 0}
   m_Name: 
   m_Conditions:
-  - m_ConditionMode: 2
-    m_ConditionEvent: Grounded
+  - m_ConditionMode: 1
+    m_ConditionEvent: Death_b
     m_EventTreshold: 0
   m_DstStateMachine: {fileID: 0}
   m_DstState: {fileID: 110238341}
@@ -7497,7 +7497,7 @@ AnimatorState:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_Name: Running_Jump
-  m_Speed: 0.6
+  m_Speed: 0.8
   m_CycleOffset: 0
   m_Transitions:
   - {fileID: 110126729}
@@ -8341,7 +8341,7 @@ AnimatorStateMachine:
     m_Position: {x: 50, y: 160, z: 0}
   - serializedVersion: 1
     m_State: {fileID: 110275706}
-    m_Position: {x: 48, y: 240, z: 0}
+    m_Position: {x: 50, y: 240, z: 0}
   - serializedVersion: 1
     m_State: {fileID: 110267120}
     m_Position: {x: 360, y: 240, z: 0}
