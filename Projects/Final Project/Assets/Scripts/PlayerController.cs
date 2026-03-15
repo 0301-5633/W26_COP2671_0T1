@@ -8,7 +8,7 @@ public class PlayerController : MonoBehaviour
     private AudioSource playerAudio;
     public float gravityModifier;
     public float jumpForce = 10;
-    public float fastDownModifier = 10;
+    public float fastDownModifier;
     public bool fastDown_b;
     public bool isOnGround = true;
     public bool gameOver;
