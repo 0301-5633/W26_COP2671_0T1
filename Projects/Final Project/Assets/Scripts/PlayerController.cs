@@ -2,6 +2,7 @@ using UnityEngine;
 
 public class PlayerController : MonoBehaviour
 {
+    
     private Animation mainCameraShake;
     private Rigidbody playerRb;
     private Animator playerAnim;
