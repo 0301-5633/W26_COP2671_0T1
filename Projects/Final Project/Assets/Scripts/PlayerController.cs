@@ -7,12 +7,13 @@ public class PlayerController : MonoBehaviour
     private Rigidbody playerRb;
     private Animator playerAnim;
     private AudioSource playerAudio;
+    private GameManager gameManagerScript;
     public float gravityModifier;
     public float jumpForce = 10;
     public float fastDownModifier;
     public bool fastDown_b;
     public bool isOnGround = true;
-    public bool gameOver;
+    
     public ParticleSystem explosionParticle;
     public ParticleSystem dirtParticle;
     public ParticleSystem crashDownParticle;
@@ -24,6 +25,7 @@ public class PlayerController : MonoBehaviour
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
+        gameManagerScript = GameObject.Find("GameManager").GetComponent<GameManager>();
         mainCameraShake = GameObject.Find("Main Camera").GetComponent<Animation>();
         playerRb = GetComponent<Rigidbody>();
         playerAnim = GetComponent<Animator>();
@@ -36,7 +38,7 @@ public class PlayerController : MonoBehaviour
     void Update()
     {
         // Player jump, animation, particles, jump sound
-        if (Input.GetKeyDown(KeyCode.Space) && isOnGround && !gameOver)
+        if (Input.GetKeyDown(KeyCode.Space) && isOnGround && !gameManagerScript.gameOver)
         {
             playerRb.AddForce(Vector3.up * jumpForce, ForceMode.Impulse);
             isOnGround = false;
@@ -44,7 +46,7 @@ public class PlayerController : MonoBehaviour
             dirtParticle.Stop();
             playerAudio.PlayOneShot(jumpSound, 1.0f);
         }
-        if (Input.GetKeyDown(KeyCode.DownArrow) && !isOnGround && !gameOver)
+        if (Input.GetKeyDown(KeyCode.DownArrow) && !isOnGround && !gameManagerScript.gameOver)
         {
             playerRb.AddForce(Vector3.down * fastDownModifier, ForceMode.Impulse);
             
@@ -61,7 +63,7 @@ public class PlayerController : MonoBehaviour
             isOnGround = true;
             
             // prevents particle play if player hits obstacle before death
-            if (!gameOver)
+            if (!gameManagerScript.gameOver)
             {
                 dirtParticle.Play();
             }
@@ -71,6 +73,7 @@ public class PlayerController : MonoBehaviour
             {
                 crashDownParticle.Play();
                 mainCameraShake.Play();
+                playerAudio.PlayOneShot(fastDownSound, 1.0f);
                 fastDown_b = false;
             }
             
@@ -78,8 +81,8 @@ public class PlayerController : MonoBehaviour
         // When player touches obstacle
         else if (collision.gameObject.CompareTag("Obstacle")) 
         {
+            gameManagerScript.gameOver = true;
             Debug.Log("Game Over");
-            gameOver = true;
             playerAnim.SetBool("Death_b", true);
             playerAnim.SetInteger("DeathType_int", 1);
             explosionParticle.Play();

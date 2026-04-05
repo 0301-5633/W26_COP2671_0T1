@@ -4,6 +4,7 @@ using static UnityEngine.GraphicsBuffer;
 public class ObstacleVariantMovements : MonoBehaviour
 {
     private Rigidbody targetRb;
+    private float leftBound = -15;
     private float minSpeed = 40;
     private float maxSpeed = 50;
     private float maxTorque = 15;
@@ -20,7 +21,10 @@ public class ObstacleVariantMovements : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        
+        if (transform.position.x < leftBound && gameObject.CompareTag("Obstacle"))
+        {
+            Destroy(gameObject);
+        }
     }
 
     Vector3 RandomForce()

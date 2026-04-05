@@ -1,27 +1,27 @@
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class GameManager : MonoBehaviour
 {
-    public enum Stage
-    {
-        City, Town, Nature
-    }
+    private StateManager stateManager;
+    
     private AudioSource gameManagerAudioSource;
     private SpawnManager spawnManagerScript;
     private SpriteRenderer stageBackground;
     private AudioSource audioOutStageTrack;
-    private PlayerController playerControllerScript;
+    private GameTimer gameTimerScript;
     private bool stageCompleteBool;
     private bool stageCleanedBool;
+
+
+    public bool gameOver = false;
     public List<Sprite> backgroundsList;
     public List<GameObject> obstaclesList;
     public List<AudioClip> tracksList;
     public AudioClip playerDeathMusic;
     public AudioClip stageCompleteMusic;
-    public Stage currentStage;
-    
-    
 
 
     //=========================
@@ -32,68 +32,59 @@ public class GameManager : MonoBehaviour
     void Start()
     {
         // Set variables to needed objects/components
+        stateManager = GameObject.Find("StateManager").GetComponent<StateManager>();
+        stateManager.gameManagerScript = this; // sets reference to GameManager once it has loaded in the state manager
+
         gameManagerAudioSource = GetComponent<AudioSource>();
-        stageBackground = GameObject.Find("Background").GetComponent<SpriteRenderer>();
         spawnManagerScript = GameObject.Find("SpawnManager").GetComponent<SpawnManager>();
+        stageBackground = GameObject.Find("Background").GetComponent<SpriteRenderer>();
         audioOutStageTrack = GameObject.Find("Main Camera").GetComponent<AudioSource>();
-        playerControllerScript = GameObject.Find("Player").GetComponent<PlayerController>();
+        gameTimerScript = GameObject.Find("Timer").GetComponent<GameTimer>();
 
         // Set current stage and set up stage assets
         //currentStage = Stage.City;
-        StageSetup(currentStage);
+        StageSetup(stateManager.currentStage);
     }
 
     // Update is called once per frame
     void Update()
     {
         CleanStageOnDeath();
+
+        // Toggles music based on pause state
+        if (stateManager.pause) {audioOutStageTrack.Pause(); }
+        if (!stateManager.pause) {audioOutStageTrack.UnPause(); }
     }
 
     //TODO: GameManager, Coroutine, Stage timer milestone
-    // - Stage timer
+    // - Stage timer (implemented, Might want to clean up, and handle calls from Here)
     // - End of stage Logic (increment currentStage, call stage setup, start next stage)
     //
 
     // Called to set up obstacles and background at the beginning of each stage
-    void StageSetup(Stage currStage)
+    void StageSetup(StateManager.Stage currStage)
     {
         stageBackground.sprite = backgroundsList[(int)currStage];
         spawnManagerScript.obstaclePrefab = obstaclesList[(int)currStage];
         audioOutStageTrack.clip = tracksList[(int)currStage];
         audioOutStageTrack.Play();
-
-        // TODO:
-        // - Stage timer will be started from here, so that when the scene is recalled, the new timer will 
-        // start with fresh timer, pulling correct assets based on current stage counter
-        // - 
     }
 
     void CleanStageOnDeath ()
     {
-        if(playerControllerScript.gameOver && !stageCleanedBool)
+        if(gameOver && !stageCleanedBool)
         {
-            stageCleanedBool = true;
-
-            // TODO:
-            // - Stop timers
+            // Timer stops as a result of gameOver bool
             audioOutStageTrack.Stop();
             gameManagerAudioSource.PlayOneShot(playerDeathMusic, 1.0f);
-            
-            // TODO:
-            // Here handle scene switching to show death title screen
-            // Scene should give user input options for try again or exit to menu
-            // Double check understanding of scene loading and closing.
+
+            stageCleanedBool = true;
         }
     }
 
-    // TODO:
-    // Stage timers to be implemented later
-    // Will be called when stage timer finished if player survived the whole time
-    // Increments stage counter
-    // Then recalls the scene, which is set up using the stage counter.
     void StageComplete ()
     {
         gameManagerAudioSource.PlayOneShot(stageCompleteMusic, 1.0f);
-        currentStage++;
+        stateManager.currentStage++;
     }
 }

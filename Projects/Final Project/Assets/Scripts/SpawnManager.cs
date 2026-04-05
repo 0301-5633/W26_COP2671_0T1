@@ -1,4 +1,6 @@
 using UnityEngine;
+using System.Collections;
+using System.Collections.Generic;
 
 public class SpawnManager : MonoBehaviour
 {
@@ -8,22 +10,22 @@ public class SpawnManager : MonoBehaviour
     private Vector3 spawnPos = new Vector3(25, 0, 0);
     private Vector3 spawnPosCity = new Vector3(25, 0.6f, -0.6f);
     private Vector3 spawnPosTown = new Vector3(25, 0, 0);
-    
-    private float startDelay = 2;
-    private float repeateRate = 2;
     private int obstacleCount;
-    private PlayerController playerControllerScript;
-    private GameManager gameManager;
-    
+    private GameManager gameManagerScript;
+    private StateManager stateManager;
+
+
+    //=========================
+    // Functions
+    //=========================
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
-        //TODO: Will need to change to coroutine so that method can be called with parameters ie current stage
-        InvokeRepeating("SpawnObstacle", startDelay, repeateRate);
+        stateManager = GameObject.Find("StateManager").GetComponent<StateManager>();
+        gameManagerScript = GameObject.Find("GameManager").GetComponent<GameManager>();
 
-        playerControllerScript = GameObject.Find("Player").GetComponent<PlayerController>();
-        gameManager = GameObject.Find("GameManager").GetComponent<GameManager>();
+        StartCoroutine(SpawnObstacle());
     }
 
     // Update is called once per frame
@@ -32,31 +34,38 @@ public class SpawnManager : MonoBehaviour
         // May Need to account for obstacles that don't fall of into delete zone
         //obstacleCount = GameObject.FindGameObjectsWithTag("Obstacle").Length;
         //if (obstacleCount == 0)
-        //{
-            
+        //{ 
         //}
     }
 
-    void SpawnObstacle()
+    IEnumerator SpawnObstacle()
     {
         //TODO: Will need to account for Pause
-        if (playerControllerScript.gameOver == false)
+        while (!gameManagerScript.gameOver && !stateManager.pause)
         {
-            switch (gameManager.currentStage)
+            yield return new WaitForSeconds(RandomSpawnDelay((float) stateManager.currentStage));
+            if (gameManagerScript.gameOver) { break; } // Just incase death happens after the delay starts before spawning
+            switch (stateManager.currentStage)
             {
-                case GameManager.Stage.City:
+                case StateManager.Stage.City:
                     Instantiate(obstaclePrefab, spawnPosCity, obstaclePrefab.transform.rotation);
                     break;
-                case GameManager.Stage.Town:
+                case StateManager.Stage.Town:
                     Instantiate(obstaclePrefab, spawnPosTown, obstaclePrefab.transform.rotation);
                     break;
-                case GameManager.Stage.Nature:
+                case StateManager.Stage.Nature:
                     Instantiate(obstaclePrefab, RandomSpawnNature(), obstaclePrefab.transform.rotation);
                     break;
             }
         }
     }
 
+    float RandomSpawnDelay(float stageModifier)
+    {
+        float spawnDelay = Random.Range(0.9f, 2);
+
+        return spawnDelay;
+    }
     Vector3 RandomSpawnNature()
     {
         int randomHeight = Random.Range(0, maxSpawnHeight);
