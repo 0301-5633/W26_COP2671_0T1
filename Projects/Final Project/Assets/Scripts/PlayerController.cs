@@ -8,49 +8,52 @@ public class PlayerController : MonoBehaviour
     private Animator playerAnim;
     private AudioSource playerAudio;
     private GameManager gameManagerScript;
-    public float gravityModifier;
     public float jumpForce = 10;
     public float fastDownModifier;
     public bool fastDown_b;
     public bool isOnGround = true;
-    
-    public ParticleSystem explosionParticle;
-    public ParticleSystem dirtParticle;
+
+
+    public ParticleSystem deathParticle;
+    public ParticleSystem runDirtParticle;
     public ParticleSystem crashDownParticle;
     public AudioClip jumpSound;
-    public AudioClip crashSound;
+    public AudioClip deathSound;
     public AudioClip fastDownSound;
     
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
+        // Set references to needed components
         gameManagerScript = GameObject.Find("GameManager").GetComponent<GameManager>();
         mainCameraShake = GameObject.Find("Main Camera").GetComponent<Animation>();
         playerRb = GetComponent<Rigidbody>();
         playerAnim = GetComponent<Animator>();
-        Physics.gravity *= gravityModifier;
-        playerAudio = GetComponent<AudioSource>();
-        
+        playerAudio = GetComponent<AudioSource>(); 
     }
 
     // Update is called once per frame
     void Update()
     {
-        // Player jump, animation, particles, jump sound
-        if (Input.GetKeyDown(KeyCode.Space) && isOnGround && !gameManagerScript.gameOver)
+        // check that game isn't over before handling further player input
+        if (!gameManagerScript.gameOver)
         {
-            playerRb.AddForce(Vector3.up * jumpForce, ForceMode.Impulse);
-            isOnGround = false;
-            playerAnim.SetTrigger("Jump_trig");
-            dirtParticle.Stop();
-            playerAudio.PlayOneShot(jumpSound, 1.0f);
-        }
-        if (Input.GetKeyDown(KeyCode.DownArrow) && !isOnGround && !gameManagerScript.gameOver)
-        {
-            playerRb.AddForce(Vector3.down * fastDownModifier, ForceMode.Impulse);
-            
-            fastDown_b = true;
+            // Player jump, animation, particles, jump sound
+            if (Input.GetKeyDown(KeyCode.Space) && isOnGround)
+            {
+                playerRb.AddForce(Vector3.up * jumpForce, ForceMode.Impulse);
+                isOnGround = false;
+                playerAnim.SetTrigger("Jump_trig");
+                runDirtParticle.Stop();
+                playerAudio.PlayOneShot(jumpSound, 1.0f);
+            }
+            if (Input.GetKeyDown(KeyCode.DownArrow) && !isOnGround)
+            {
+                playerRb.AddForce(Vector3.down * fastDownModifier, ForceMode.Impulse);
+
+                fastDown_b = true;
+            }
         }
     }
 
@@ -59,35 +62,40 @@ public class PlayerController : MonoBehaviour
     {
         // When Player touches ground after jump
         if (collision.gameObject.CompareTag("Ground"))
-        {
-            isOnGround = true;
-            
-            // prevents particle play if player hits obstacle before death
+        { 
+            // prevents unexpected behavior if player hits obstacle before death
             if (!gameManagerScript.gameOver)
             {
-                dirtParticle.Play();
+                runDirtParticle.Play();
+                isOnGround = true;
             }
 
-            // handles fastdown effects
-            if (fastDown_b)
+            // handles fastdown effects if game isn't over
+            if (fastDown_b && !gameManagerScript.gameOver)
             {
                 crashDownParticle.Play();
                 mainCameraShake.Play();
                 playerAudio.PlayOneShot(fastDownSound, 1.0f);
-                fastDown_b = false;
+                fastDown_b = false; // end of fast down effects
             }
             
         } 
         // When player touches obstacle
         else if (collision.gameObject.CompareTag("Obstacle")) 
         {
-            gameManagerScript.gameOver = true;
-            Debug.Log("Game Over");
+            gameManagerScript.gameOver = true;  // tell game manager that game is over
+
+            // handle player animation for death
             playerAnim.SetBool("Death_b", true);
             playerAnim.SetInteger("DeathType_int", 1);
-            explosionParticle.Play();
-            dirtParticle.Stop();
-            playerAudio.PlayOneShot(crashSound, 1.0f);
+
+            runDirtParticle.Stop(); // stop running particle
+
+            // Play death effects
+            deathParticle.Play();
+            playerAudio.PlayOneShot(deathSound, 1.0f);
+
+            Debug.Log("Game Over");
         }
     }
 }

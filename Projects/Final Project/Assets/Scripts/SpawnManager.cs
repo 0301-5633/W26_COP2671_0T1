@@ -4,8 +4,9 @@ using System.Collections.Generic;
 
 public class SpawnManager : MonoBehaviour
 {
+    public bool SENABLE = true;
 
-    public GameObject obstaclePrefab; // is set inside of GameManager based on current stage
+    public GameObject obstaclePrefab; 
     public int maxSpawnHeight = 11;
     private Vector3 spawnPos = new Vector3(25, 0, 0);
     private Vector3 spawnPosCity = new Vector3(25, 0.6f, -0.6f);
@@ -25,26 +26,24 @@ public class SpawnManager : MonoBehaviour
         stateManager = GameObject.Find("StateManager").GetComponent<StateManager>();
         gameManagerScript = GameObject.Find("GameManager").GetComponent<GameManager>();
 
-        StartCoroutine(SpawnObstacle());
+        
     }
 
     // Update is called once per frame
     void Update()
     {
-        // May Need to account for obstacles that don't fall of into delete zone
-        //obstacleCount = GameObject.FindGameObjectsWithTag("Obstacle").Length;
-        //if (obstacleCount == 0)
-        //{ 
-        //}
+
     }
 
-    IEnumerator SpawnObstacle()
+    public IEnumerator SpawnObstacle()
     {
+        
         //TODO: Will need to account for Pause
-        while (!gameManagerScript.gameOver && !stateManager.pause)
+        while (!gameManagerScript.gameOver && !stateManager.pause && SENABLE)
         {
+            
             yield return new WaitForSeconds(RandomSpawnDelay((float) stateManager.currentStage));
-            if (gameManagerScript.gameOver) { break; } // Just incase death happens after the delay starts before spawning
+            
             switch (stateManager.currentStage)
             {
                 case StateManager.Stage.City:

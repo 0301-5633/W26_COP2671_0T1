@@ -543,10 +543,6 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
-    - target: {fileID: 238916614788464039, guid: 91f8a545e6c44164cb016c48d5627029, type: 3}
-      propertyPath: stageTime
-      value: 30
-      objectReference: {fileID: 0}
     - target: {fileID: 1165402894377305343, guid: 91f8a545e6c44164cb016c48d5627029, type: 3}
       propertyPath: m_Pivot.x
       value: 0
@@ -627,6 +623,10 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 2243341135606721983, guid: 91f8a545e6c44164cb016c48d5627029, type: 3}
+      propertyPath: m_Alpha
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 3218532906067907246, guid: 91f8a545e6c44164cb016c48d5627029, type: 3}
       propertyPath: m_Name
       value: GameUI
@@ -636,6 +636,26 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 91f8a545e6c44164cb016c48d5627029, type: 3}
+--- !u!1 &735643114 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 3452323899233521579, guid: 91f8a545e6c44164cb016c48d5627029, type: 3}
+  m_PrefabInstance: {fileID: 735643113}
+  m_PrefabAsset: {fileID: 0}
+--- !u!1 &735643115 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 8316253572847515070, guid: 91f8a545e6c44164cb016c48d5627029, type: 3}
+  m_PrefabInstance: {fileID: 735643113}
+  m_PrefabAsset: {fileID: 0}
+--- !u!1 &735643116 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 1544406568875086472, guid: 91f8a545e6c44164cb016c48d5627029, type: 3}
+  m_PrefabInstance: {fileID: 735643113}
+  m_PrefabAsset: {fileID: 0}
+--- !u!1 &735643118 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 3112460300623464375, guid: 91f8a545e6c44164cb016c48d5627029, type: 3}
+  m_PrefabInstance: {fileID: 735643113}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &835818919
 GameObject:
   m_ObjectHideFlags: 0
@@ -804,6 +824,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 68a06b64761c9ad489711f255d0c06c6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::SpawnManager
+  SENABLE: 1
   obstaclePrefab: {fileID: 8100214331139902677, guid: f97da8a7ff6639c4891ee16bf0a2a98a, type: 3}
   maxSpawnHeight: 11
 --- !u!4 &1185647308
@@ -897,22 +918,18 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7ed7ddeaed3aca2439db1c02b4d5fe52, type: 3}
   m_Name: 
   m_EditorClassIdentifier: '::'
-  gameOver: 0
-  backgroundsList:
-  - {fileID: 21300000, guid: 66ce0fda7508547d2be6b20eac53f119, type: 3}
-  - {fileID: 21300000, guid: 640fa9e54570b4acbbc4acf8f3bf8663, type: 3}
-  - {fileID: 21300000, guid: 17881b719d84f46169e88d04d594eb75, type: 3}
-  obstaclesList:
-  - {fileID: 8100214331139902677, guid: f97da8a7ff6639c4891ee16bf0a2a98a, type: 3}
-  - {fileID: 3909929076529515441, guid: 182e009476b491b4daa793bda1564ea3, type: 3}
-  - {fileID: 8100214331139902677, guid: f11f3a0a4c69598408cca7d55661496a, type: 3}
-  tracksList:
-  - {fileID: 8300000, guid: 5d5556191785d0849ac5fc5090ff201a, type: 3}
-  - {fileID: 8300000, guid: 1cfbdf9c8ef004342acc281c812eb198, type: 3}
-  - {fileID: 8300000, guid: a2c0ec0f99e827344a0164fa1cab3128, type: 3}
-  - {fileID: 8300000, guid: a4a0de72bd9f97a42ba8fd44679bd181, type: 3}
+  screenFader: {fileID: 0}
   playerDeathMusic: {fileID: 8300000, guid: c3da008608e374747b035bc8cd8eae37, type: 3}
   stageCompleteMusic: {fileID: 8300000, guid: f559978967a1b014184ebc4fe3f42e0d, type: 3}
+  stageClearTitle: {fileID: 735643118}
+  victoryTitle: {fileID: 735643115}
+  gameOverTitle: {fileID: 735643116}
+  mainMenuButtonGO: {fileID: 735643114}
+  gravityModifier: 4
+  stageTime: 15
+  stageComplete: 0
+  gameOver: 0
+  score: 0
 --- !u!82 &1984784010
 AudioSource:
   m_ObjectHideFlags: 0
@@ -926,7 +943,7 @@ AudioSource:
   m_audioClip: {fileID: 0}
   m_Resource: {fileID: 0}
   m_PlayOnAwake: 1
-  m_Volume: 1
+  m_Volume: 0.5
   m_Pitch: 1
   Loop: 0
   Mute: 0
@@ -1182,10 +1199,38 @@ PrefabInstance:
       propertyPath: m_Enabled
       value: 1
       objectReference: {fileID: 0}
+    - target: {fileID: 7707397775497126215, guid: f147a01ef442b2345a3546109476c690, type: 3}
+      propertyPath: m_UseGravity
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 8651314290356509853, guid: f147a01ef442b2345a3546109476c690, type: 3}
+      propertyPath: jumpForce
+      value: 1100
+      objectReference: {fileID: 0}
+    - target: {fileID: 8651314290356509853, guid: f147a01ef442b2345a3546109476c690, type: 3}
+      propertyPath: deathSound
+      value: 
+      objectReference: {fileID: 8300000, guid: e7ee25a47d63b46cdaf65480d62b405c, type: 3}
+    - target: {fileID: 8651314290356509853, guid: f147a01ef442b2345a3546109476c690, type: 3}
+      propertyPath: isOnGround
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8651314290356509853, guid: f147a01ef442b2345a3546109476c690, type: 3}
+      propertyPath: deathParticle
+      value: 
+      objectReference: {fileID: 9125212449759046732, guid: cb7cd9b0c56a24d49a40784bd3203ae6, type: 3}
+    - target: {fileID: 8651314290356509853, guid: f147a01ef442b2345a3546109476c690, type: 3}
+      propertyPath: runDirtParticle
+      value: 
+      objectReference: {fileID: 1438565936, guid: fb82dfb8d1c7044c69afd2486befecb3, type: 3}
     - target: {fileID: 8651314290356509853, guid: f147a01ef442b2345a3546109476c690, type: 3}
       propertyPath: crashDownParticle
       value: 
       objectReference: {fileID: 243119265}
+    - target: {fileID: 8651314290356509853, guid: f147a01ef442b2345a3546109476c690, type: 3}
+      propertyPath: isInvincibleDEBUG
+      value: 1
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects:

@@ -1,19 +1,19 @@
 using System;
+using System.Collections;
 using TMPro;
 using UnityEngine;
 
 public class GameTimer : MonoBehaviour
 {
-    public TextMeshProUGUI timeRemaining;
-    public float stageTime = 30f;
-    public int score;
-    public bool stageCompleted;
-
-
     private StateManager stateManager;
     private GameManager gameManagerScript;
 
     private float timer;
+
+
+    public TextMeshProUGUI timeRemaining;
+
+    
 
 
     //=========================
@@ -26,7 +26,6 @@ public class GameTimer : MonoBehaviour
         stateManager = GameObject.Find("StateManager").GetComponent<StateManager>();
         gameManagerScript = GameObject.Find("GameManager").GetComponent<GameManager>();
 
-        stageCompleted = false;
         //TODO: Might want to handle stage time based on stage for increasing difficulty???
         ResetTimer();
     }
@@ -34,24 +33,32 @@ public class GameTimer : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (Mathf.FloorToInt(timer) > 0 && !gameManagerScript.gameOver && !stateManager.pause) // Decrement timer and update display
+        
+    }
+
+    public IEnumerator StartTimer()
+    {
+        while (Mathf.FloorToInt(timer) > 0)
         {
-            timer -= Time.deltaTime;
-            Debug.Log("Timer: " + timer);
-            UpdateTimerDisplay(timer);
-        }
-        if (Mathf.FloorToInt(timer) <= 0 && !gameManagerScript.gameOver && !stateManager.pause) // if timer runs out stage is complete
-        {
-            // Stage Complete
-            Debug.Log("Stage Complete");
-            stageCompleted = true;
-            score = Mathf.FloorToInt(timer);
+            if (!gameManagerScript.gameOver && !stateManager.pause) // Decrement timer and update display
+            {
+                timer -= Time.deltaTime;
+                //Debug.Log("Timer: " + timer);
+                UpdateTimerDisplay(timer);
+            }
+            if (Mathf.FloorToInt(timer) <= 0 && !gameManagerScript.gameOver && !stateManager.pause) // if timer runs out stage is complete
+            {
+                // Stage Complete
+                gameManagerScript.stageComplete = true;
+                gameManagerScript.score = Mathf.FloorToInt(timer);
+            }
+            yield return null;
         }
     }
     
     void ResetTimer()
     {
-        timer = stageTime;
+        timer = gameManagerScript.stageTime;
     }
 
     void UpdateTimerDisplay(float time)
