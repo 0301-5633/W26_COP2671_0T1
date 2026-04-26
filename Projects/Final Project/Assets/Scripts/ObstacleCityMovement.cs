@@ -5,6 +5,7 @@ public class ObstacleVariantMovements : MonoBehaviour
 {
     private Rigidbody targetRb;
     private float leftBound = -15;
+    private float lowerBound = -25;
     private float minSpeed = 40;
     private float maxSpeed = 50;
     private float maxTorque = 15;
@@ -22,6 +23,11 @@ public class ObstacleVariantMovements : MonoBehaviour
     void Update()
     {
         if (transform.position.x < leftBound && gameObject.CompareTag("Obstacle"))
+        {
+            Destroy(gameObject);
+        }
+
+        if (transform.position.y < lowerBound && gameObject.CompareTag("Obstacle"))
         {
             Destroy(gameObject);
         }

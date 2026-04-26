@@ -1,7 +1,7 @@
 using UnityEngine;
 using UnityEngine.UI;
 
-public class MainMenuButtonScript : MonoBehaviour
+public class QuitButtonScript : MonoBehaviour
 {
     private StateManager stateManager;
     private Button button;
@@ -12,7 +12,7 @@ public class MainMenuButtonScript : MonoBehaviour
         stateManager = GameObject.Find("StateManager").GetComponent<StateManager>();
 
         button = GetComponent<Button>();
-        button.onClick.AddListener(MainMenu);
+        button.onClick.AddListener(clickQuitButton);
     }
 
     // Update is called once per frame
@@ -20,8 +20,9 @@ public class MainMenuButtonScript : MonoBehaviour
     {
         
     }
-    void MainMenu()
+
+    void clickQuitButton()
     {
-        stateManager.LoadMainMenu();
+        stateManager.quitGame();
     }
 }

@@ -7,6 +7,7 @@ public class MoveLeft : MonoBehaviour
 
     private float speed = 20;
     private float leftBound = -15;
+    private float lowerBound = -25;
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
@@ -24,6 +25,11 @@ public class MoveLeft : MonoBehaviour
         }
 
         if (transform.position.x < leftBound && gameObject.CompareTag("Obstacle"))
+        {
+            Destroy(gameObject);
+        }
+        
+        if (transform.position.y < lowerBound && gameObject.CompareTag("Obstacle"))
         {
             Destroy(gameObject);
         }

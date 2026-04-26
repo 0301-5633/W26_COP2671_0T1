@@ -1,3 +1,4 @@
+using System.Collections;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
@@ -8,13 +9,16 @@ public class GameManager : MonoBehaviour
 
     public ScreenFader screenFader;
     private AudioSource gameManagerAudioSource;
-    private SpawnManager spawnManagerScript;
     private SpriteRenderer stageBackground;
-    private AudioSource audioOutStageTrack;
-    private GameTimer gameTimer;
     private bool stageCleanedBool;
+    private StageStartScript stageStart;
+    
     private Coroutine timer;
     private Coroutine spawner;
+
+    public AudioSource audioOutStageTrack;
+    public SpawnManager spawnManagerScript;
+    public GameTimer gameTimer;
 
     public AudioClip playerDeathMusic;
     public AudioClip stageCompleteMusic;
@@ -28,11 +32,13 @@ public class GameManager : MonoBehaviour
 
 
     public float gravityModifier;
-    public float stageTime = 30f;
+    public float stageTime;
     public bool stageComplete = false;
     public bool gameOver = false;
 
     public int score;
+
+    public bool IsGameStarted { get; set; } = false;
 
 
     //=========================
@@ -51,6 +57,9 @@ public class GameManager : MonoBehaviour
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
+
+        Time.timeScale = 0f;
+
         // Set variables to needed objects/components
         gameManagerAudioSource = GetComponent<AudioSource>();
         spawnManagerScript = GameObject.Find("SpawnManager").GetComponent<SpawnManager>();
@@ -59,21 +68,28 @@ public class GameManager : MonoBehaviour
         screenFader = GameObject.Find("FaderImage").GetComponent<ScreenFader>();
         gameTimer = GameObject.Find("Timer").GetComponent<GameTimer>();
 
+        stageStart = GameObject.Find("StageStart").GetComponent<StageStartScript>();
+
         
-
-
         // Set current stage and set up stage assets
         StageSetup();
+
+        StartCoroutine(stageStart.CountdownRoutine());
+
+
     }
 
     // Update is called once per frame
     void Update()
     {
-        // check pause and handle needed game control
-        Pause();
+        if (IsGameStarted)
+        {
+            // check pause and handle needed game control
+            Pause();
 
-        // Game over
-        CleanStageOnDeath();
+            // Game over
+            CleanStageOnDeath();
+        }
     }
 
     
@@ -90,18 +106,21 @@ public class GameManager : MonoBehaviour
         spawnManagerScript.obstaclePrefab = stateManager.obstaclesList[(int)stateManager.currentStage];
         audioOutStageTrack.clip = stateManager.tracksList[(int)stateManager.currentStage];
 
-        // start game timer
+        
+    }
+
+    public void StartTimedEvents()
+    {
+        
         timer = StartCoroutine(gameTimer.StartTimer());
         spawner = StartCoroutine(spawnManagerScript.SpawnObstacle());
-
-        audioOutStageTrack.Play();
     }
 
     void CleanStageOnDeath()
     {
         if(gameOver && !stageCleanedBool)
         {
-            // Timer stops as a result of gameOver bool
+            StopCoroutine(timer);
             StopCoroutine(spawner);
             audioOutStageTrack.Stop();
             gameManagerAudioSource.PlayOneShot(playerDeathMusic, 1.0f);

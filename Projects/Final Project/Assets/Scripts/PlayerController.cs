@@ -11,7 +11,7 @@ public class PlayerController : MonoBehaviour
     public float jumpForce = 10;
     public float fastDownModifier;
     public bool fastDown_b;
-    public bool isOnGround = true;
+    public bool isOnGround;
 
 
     public ParticleSystem deathParticle;
@@ -37,15 +37,16 @@ public class PlayerController : MonoBehaviour
     void Update()
     {
         // check that game isn't over before handling further player input
-        if (!gameManagerScript.gameOver)
+        if (!gameManagerScript.gameOver && gameManagerScript.IsGameStarted)
         {
             // Player jump, animation, particles, jump sound
             if (Input.GetKeyDown(KeyCode.Space) && isOnGround)
             {
-                playerRb.AddForce(Vector3.up * jumpForce, ForceMode.Impulse);
+                Debug.Log("jump");
                 isOnGround = false;
-                playerAnim.SetTrigger("Jump_trig");
+                playerRb.AddForce(Vector3.up * jumpForce, ForceMode.Impulse);
                 runDirtParticle.Stop();
+                playerAnim.SetTrigger("Jump_trig");
                 playerAudio.PlayOneShot(jumpSound, 1.0f);
             }
             if (Input.GetKeyDown(KeyCode.DownArrow) && !isOnGround)

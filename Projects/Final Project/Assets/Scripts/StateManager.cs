@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
@@ -29,9 +30,6 @@ public class StateManager : MonoBehaviour
     public List<GameObject> obstaclesList;
     public List<AudioClip> tracksList;
 
-    public List<Score> Scoreboard;
-
-
     public bool pause = false;
     public bool victory = false;
 
@@ -58,9 +56,9 @@ public class StateManager : MonoBehaviour
         if (gameManagerScript != null)
         {
             // Pause game if playing, quit if at menu
-            if (Input.GetKeyDown(KeyCode.Escape)) 
+            if (Input.GetKeyDown(KeyCode.Escape) && gameManagerScript.IsGameStarted) 
             {
-                Debug.Log("Escape Pressed");
+                //Debug.Log("Escape Pressed");
                 PauseStateToggle();
             }
 
@@ -68,7 +66,7 @@ public class StateManager : MonoBehaviour
             {
                 gameManagerScript.StageComplete();   
             }
-            if (!victory && gameManagerScript.screenFader.fadeComplete)
+            if (!victory && gameManagerScript.screenFader.fadeComplete && !gameManagerScript.gameOver)
             {
                 LoadNextStage();
             }
@@ -80,7 +78,7 @@ public class StateManager : MonoBehaviour
 
     }
 
-    void PauseStateToggle()
+    public void PauseStateToggle()
     {
         //can be paused.
         if (!gameManagerScript.gameOver)
@@ -108,6 +106,20 @@ public class StateManager : MonoBehaviour
         SceneManager.UnloadSceneAsync(mainMenuScene);
         
     }
+    internal void quitGame()
+    {
+
+        // unload current game scene
+        SceneManager.UnloadSceneAsync(gameScene);
+        if (pause)
+        {
+            PauseStateToggle();
+        }
+
+        SceneManager.LoadScene(mainMenuScene, LoadSceneMode.Additive);
+
+        resetGame();
+    }
 
     public void LoadNextStage()
     {
@@ -118,13 +130,8 @@ public class StateManager : MonoBehaviour
         
     }
 
-    public void LoadMainMenu()
+    void resetGame()
     {
-        SceneManager.LoadScene(mainMenuScene, LoadSceneMode.Additive);
-        SceneManager.UnloadSceneAsync(gameScene);
-
+        currentStage = Stage.City;
     }
-
-
- 
 }

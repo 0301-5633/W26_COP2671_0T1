@@ -1,10 +1,10 @@
 using UnityEngine;
 using System.Collections;
-using System.Collections.Generic;
+
 
 public class SpawnManager : MonoBehaviour
 {
-    public bool SENABLE = true;
+    
 
     public GameObject obstaclePrefab; 
     public int maxSpawnHeight = 11;
@@ -39,7 +39,7 @@ public class SpawnManager : MonoBehaviour
     {
         
         //TODO: Will need to account for Pause
-        while (!gameManagerScript.gameOver && !stateManager.pause && SENABLE)
+        while (!gameManagerScript.gameOver && !stateManager.pause)
         {
             
             yield return new WaitForSeconds(RandomSpawnDelay((float) stateManager.currentStage));
